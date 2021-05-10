@@ -46,4 +46,5 @@ Knot* cp_el(Knot* knot1, Knot* help);
 Knot* seach(Knot* knot1, char* key);
 int load(Knot** knot1, char* name);
 void a_bit_more(Knot* knot1, char* key, Knot** help);
+void free_tree(Knot* knot1);
 #endif

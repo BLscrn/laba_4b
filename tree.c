@@ -320,3 +320,9 @@ void a_bit_more(Knot* knot1, char* key,Knot** help) {
 		
 	}
 }
+
+void free_tree(Knot* knot1) {
+	while (knot1 != NULL) {
+		del_el(&knot1, knot1->key);
+	}
+}

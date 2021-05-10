@@ -6,8 +6,6 @@
 #include "dialog.h"
 
 
-
-
 int main() {
 	
 	ret = 0;
@@ -19,6 +17,6 @@ int main() {
 		check_ans(ret, help);
 	}
 	ret = 1;
-	//free_tree(knot1);
+	free_tree(knot1);
 	return 0;
 }
