@@ -39,20 +39,20 @@ int getInt(int* a) {
 int dialog(char** key, char** inf1, char** inf2, int* what, char** key2) {
 	int flag, ch;
 	char* chouse[] = { "1. Enter new element", "2. delete element"
-		,"3. find element","4. show tree","5. Exite","6. show tree like graf" };
+		,"3. find element","4. show tree","5. Obhod in deep","6. show tree like graf","7. Exite" };
 	printf("Choose one of this variants:\n");
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 7; i++) {
 		printf("%s\n", chouse[i]);
 	}
 	flag = 0;
 	do {
 		if (flag == 1) {
-			printf("\nPlease enter number more than 0 and less than 6:");
+			printf("\nPlease enter number more than 0 and less than 7:");
 		}
 		getInt(&ch);
 		while (getchar() != '\n');
 		flag = 1;
-	} while (ch <= 0 || ch >= 7);
+	} while (ch <= 0 || ch >= 8);
 	if (ch == 1) {
 		printf("Enter key:");
 		*key = enter_str();
@@ -81,10 +81,16 @@ int dialog(char** key, char** inf1, char** inf2, int* what, char** key2) {
 		return 4;
 	}
 	if (ch == 5) {
+		printf("Enter key:");
+		*key = enter_str();
+		while (getchar() != '\n');
 		return 5;
 	}
 	if (ch == 6) {
 		return 6;
+	}
+	if (ch == 7) {
+		return 7;
 	}
 }
 
@@ -102,7 +108,7 @@ void print_tree(Knot* knot1, int i) {
 void check_ans(int res, Knot* help) {
 	if (res == 2 || res == 301) {
 		printf("<show element>\n ");
-		printf("\n\n%s\n%s\n%s", help->key, help->info->inf1, help->info->inf2);
+		printf("\n\n%s\n%s\n%s\n", help->key, help->info->inf1, help->info->inf2);
 	}
 	if (res == 404) {
 		printf("There are no such element in the tree\n");
@@ -126,4 +132,20 @@ void entee_file(Knot** knot1) {
 			free(name);
 		} while (re == 1);
 	}
+}
+
+
+void obhod_deep(Knot* knot1) {
+	if (knot1 == NULL) {
+		return;
+	}
+	else {
+		obhod_deep(knot1->left);
+		obhod_deep(knot1->right);
+		printf("\nkey: %s\nfirst inf: %s\nsecond inf: %s\n", knot1->key, knot1->info->inf1, knot1->info->inf2);
+	}
+}
+void show_tree(Knot* knot1) {
+	printf("<--show  tree-->\n ");
+	obhod_deep(knot1);
 }

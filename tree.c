@@ -25,15 +25,21 @@ int rasp(int ch, char* key, char* inf1, char* inf2, int what, Knot** help, Knot*
 		else { return 404; }
 	}
 	if (ch == 4) {
-		//show_tree(*knot1);
+		show_tree(*knot1);
 		return 0;
 	}
 	if (ch == 5) {
-		return 5;
+		*help = NULL;
+		a_bit_more(*knot1, key,help);
+		if (*help != NULL) { return 2; }
+		else { return 404; }
 	}
 	if (ch == 6) {
 		print_tree(*knot1, 0);
 		return 0;
+	}
+	if (ch == 7) {
+		return 7;
 	}
 }
 
@@ -253,10 +259,10 @@ Knot* seach(Knot* knot1, char* key) {
 		return knot1;
 	}
 	if (strcmp(key, knot1->key) < 0) {
-		return knot1->left;
+		return seach(knot1->left,key);
 	}
 	if (strcmp(key, knot1->key) > 0) {
-		return knot1->right;
+		return seach(knot1->right,key);
 	}
 }
 
@@ -298,4 +304,19 @@ int load(Knot** knot1, char* name) {
 
 	}
 	return 0;
+}
+
+void a_bit_more(Knot* knot1, char* key,Knot** help) {
+	if (knot1 == NULL) {
+		return;
+	}
+	else {
+		a_bit_more(knot1->left,key,help);
+		if (strcmp(key, knot1->key) < 0 && *help == NULL) {
+			*help = knot1;
+			return;
+		}
+		a_bit_more(knot1->right,key,help);
+		
+	}
 }

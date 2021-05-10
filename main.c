@@ -13,7 +13,7 @@ int main() {
 	ret = 0;
 	knot1 = NULL;
 	entee_file(&knot1);
-	while (ret != 5) {
+	while (ret != 7) {
 		ch = dialog(&key, &inf1, &inf2, &what, &key2);
 		ret = rasp(ch, key, inf1, inf2, what, &help, &knot1, key2);
 		check_ans(ret, help);
