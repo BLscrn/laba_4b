@@ -75,9 +75,6 @@ int dialog(char** key, char** inf1, char** inf2, int* what, char** key2) {
 		printf("Enter key:");
 		*key = enter_str();
 		while (getchar() != '\n');
-		printf("Enter number:");
-		getInt(what);
-		while (getchar() != '\n');
 		return 3;
 	}
 	if (ch == 4) {
@@ -100,4 +97,33 @@ void print_tree(Knot* knot1, int i) {
 	}
 	printf("%s  %d\n", knot1->key,knot1->color);
 	print_tree(knot1->left, i + 1);
+}
+
+void check_ans(int res, Knot* help) {
+	if (res == 2 || res == 301) {
+		printf("<show element>\n ");
+		printf("\n\n%s\n%s\n%s", help->key, help->info->inf1, help->info->inf2);
+	}
+	if (res == 404) {
+		printf("There are no such element in the tree\n");
+	}
+
+}
+
+void entee_file(Knot** knot1) {
+	char* name;
+	char qwer;
+	int re = 1;
+	printf("Do you want to use file?y/n ");
+	scanf("%c", &qwer);
+	while (getchar() != '\n');
+	if (qwer == 'y') {
+		do {
+			printf("Enter name of the file: ");
+			name = enter_str();
+			while (getchar() != '\n');
+			re = load(knot1, name);
+			free(name);
+		} while (re == 1);
+	}
 }

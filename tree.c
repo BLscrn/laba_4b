@@ -19,11 +19,10 @@ int rasp(int ch, char* key, char* inf1, char* inf2, int what, Knot** help, Knot*
 		return 0;
 	}
 	if (ch == 3) {
-		/**help = NULL;
-		find_el(*knot1, key, what, help);
+		
+		*help = seach(*knot1, key);
 		if (*help != NULL) { return 2; }
 		else { return 404; }
-		*/
 	}
 	if (ch == 4) {
 		//show_tree(*knot1);
@@ -163,6 +162,7 @@ Knot* delete(Knot* knot1, char* key) {
 			knot1 = rotateRight(knot1);
 		}
 		if (strcmp(key, knot1->key) == 0 && (knot1->right == NULL)) {
+			FREE_knot(knot1);
 			return NULL;
 		}
 		if (isRED(knot1->right) == 0 && isRED(knot1->right->left) == 0) {
@@ -171,9 +171,11 @@ Knot* delete(Knot* knot1, char* key) {
 		if (strcmp(key, knot1->key) == 0) {
 			Knot* min;
 			min = min_knot(knot1->right);
-			knot1->info->inf1 = min->info->inf1;
+			/*knot1->info->inf1 = min->info->inf1;
 			knot1->info->inf2 = min->info->inf2;
 			knot1->key =  min->key;
+			*/
+			knot1 = cp_el(knot1, min);
 			knot1->right = del_min(knot1->right);
 		}
 		else {
@@ -197,6 +199,7 @@ Knot* min_knot(Knot* knot1) {
 
 Knot* del_min(Knot* knot1) {
 	if (knot1->left == NULL) {
+		FREE_knot(knot1);
 		return NULL;
 	}
 	if (isRED(knot1->left) == 0 && isRED(knot1->left->left) == 0) {
@@ -219,4 +222,80 @@ Knot* fixUP(Knot* knot1) {
 		flipColors(knot1);
 	}
 	return knot1;
+}
+
+void FREE_knot(Knot* knot1) {
+	free(knot1->key);
+	free(knot1->info->inf1);
+	free(knot1->info->inf2);
+	free(knot1->info);
+	free(knot1);
+}
+
+Knot* cp_el(Knot* knot1,Knot* help) {
+	free((knot1)->key);
+	(knot1)->key = (char*)calloc(strlen(help->key) + 1, sizeof(char));
+	strcpy(knot1->key, help->key);
+	free(knot1->info->inf1);
+	(knot1)->info->inf1 = (char*)calloc(strlen(help->info->inf1) + 1, sizeof(char));
+	strcpy(knot1->info->inf1, help->info->inf1);
+	free(knot1->info->inf2);
+	(knot1)->info->inf2 = (char*)calloc(strlen(help->info->inf2) + 1, sizeof(char));
+	strcpy(knot1->info->inf2, help->info->inf2);
+	return knot1;
+}
+
+Knot* seach(Knot* knot1, char* key) {
+	if (knot1 == NULL) {
+		return NULL;
+	}
+	if (strcmp(key, knot1->key) == 0) {
+		return knot1;
+	}
+	if (strcmp(key, knot1->key) < 0) {
+		return knot1->left;
+	}
+	if (strcmp(key, knot1->key) > 0) {
+		return knot1->right;
+	}
+}
+
+
+int load(Knot** knot1, char* name) {
+	FILE* f = NULL;
+	char** inf;
+	char** inf_help;
+	char* help;
+	char* prov;
+	int flag;
+	inf = (char**)calloc(3, sizeof(char*));
+	for (int i = 0; i < 3; i++) {
+		inf[i] = (char*)calloc(255, sizeof(char));
+	}
+
+	f = fopen(name, "r+b");
+	if (f == NULL) {
+		return 1;
+	}
+	flag = 1;
+	while (flag == 1) {
+		inf_help = (char**)calloc(3, sizeof(char*));
+		for (int i = 0; i < 3; i++) {
+			inf_help[i] = (char*)calloc(255, sizeof(char));
+		}
+		for (int i = 0; i < 3; i++) {
+			prov = fgets(inf[i], 255, f);
+			if (prov == NULL) {
+				flag = 0;
+				break;
+			}
+			strncpy(inf_help[i], inf[i], strlen(inf[i]) - 2);
+		}
+
+		if (flag == 0) { continue; }
+		//from_str_to_fl(inf_help[1], &inf2);
+		add_el(knot1, inf_help[0], inf_help[1], inf_help[2]);
+
+	}
+	return 0;
 }
