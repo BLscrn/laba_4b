@@ -34,4 +34,11 @@ Knot* new_knot(char* key, char* inf1, char* inf2);
 void add_el(Knot* knot1, char* key, char* inf1, char* inf2);
 Knot* insert(Knot* knot1, char* key, char* inf1, char* inf2);
 int isRED(Knot* knot1);
+Knot* moveRedLeft(Knot* knot1);
+Knot* moveRedRight(Knot* knot1);
+void del_el(Knot** knot1, char* key);
+Knot* delete(Knot* knot1, char* key);
+Knot* min_knot(Knot* knot1);
+Knot* del_min(Knot* knot1);
+Knot* fixUP(Knot* knot1);
 #endif

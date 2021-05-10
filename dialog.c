@@ -69,9 +69,6 @@ int dialog(char** key, char** inf1, char** inf2, int* what, char** key2) {
 		printf("Enter key:");
 		*key = enter_str();
 		while (getchar() != '\n');
-		printf("Enter number:");
-		getInt(what);
-		while (getchar() != '\n');
 		return 2;
 	}
 	if (ch == 3) {

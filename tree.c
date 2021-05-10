@@ -14,7 +14,7 @@ int rasp(int ch, char* key, char* inf1, char* inf2, int what, Knot** help, Knot*
 		return 0;
 	}
 	if (ch == 2) {
-		//del_el(knot1, key, what, *knot1);
+		del_el(knot1, key);
 		//prosh_tree(*knot1);
 		return 0;
 	}
@@ -124,4 +124,99 @@ Knot* insert(Knot* knot1, char* key, char* inf1, char* inf2) {
 	return knot1;
 }
 
+Knot* moveRedLeft(Knot* knot1) {
+	flipColors(knot1);
+	if (isRED(knot1->right->left) == 1) {
+		knot1->right = rotateRight(knot1->right);
+		knot1 = rotateLeft(knot1);
+		flipColors(knot1);
+	}
+	return knot1;
+}
 
+Knot* moveRedRight(Knot* knot1) {
+	flipColors(knot1);
+	if (isRED(knot1->left->left) == 1) {
+		knot1 = rotateRight(knot1);
+		flipColors(knot1);
+	}
+	return knot1;
+}
+
+void del_el(Knot** knot1, char* key) {
+	*knot1 = delete(*knot1, key);
+	
+	if (*knot1 != NULL) {
+		(*knot1)->color = 0;
+	}
+}
+
+Knot* delete(Knot* knot1, char* key) {
+	if (strcmp(key, knot1->key) < 0) {
+		if (isRED(knot1->left) == 0 && isRED(knot1->left->left) == 0) {
+			knot1 = moveRedLeft(knot1);
+		}
+		knot1->left = delete(knot1->left, key);
+	}
+	else {
+		if (isRED(knot1->left) == 1) {
+			knot1 = rotateRight(knot1);
+		}
+		if (strcmp(key, knot1->key) == 0 && (knot1->right == NULL)) {
+			return NULL;
+		}
+		if (isRED(knot1->right) == 0 && isRED(knot1->right->left) == 0) {
+			knot1 = moveRedRight(knot1);
+		}
+		if (strcmp(key, knot1->key) == 0) {
+			Knot* min;
+			min = min_knot(knot1->right);
+			knot1->info->inf1 = min->info->inf1;
+			knot1->info->inf2 = min->info->inf2;
+			knot1->key =  min->key;
+			knot1->right = del_min(knot1->right);
+		}
+		else {
+			knot1->right = delete(knot1->right, key);
+		}
+
+	}
+	return fixUP(knot1);
+}
+
+
+Knot* min_knot(Knot* knot1) {
+	if (knot1->left == NULL) {
+		return knot1;
+	}
+	else {
+		return min_knot(knot1->left);
+	}
+}
+
+
+Knot* del_min(Knot* knot1) {
+	if (knot1->left == NULL) {
+		return NULL;
+	}
+	if (isRED(knot1->left) == 0 && isRED(knot1->left->left) == 0) {
+		knot1 = moveRedLeft(knot1);
+	}
+
+	knot1->left = del_min(knot1->left);
+	return fixUP(knot1);
+}
+
+
+Knot* fixUP(Knot* knot1) {
+	if (isRED(knot1->right) == 1 && isRED(knot1->left) == 0) {
+		knot1 = rotateLeft(knot1);
+	}
+	if (isRED(knot1->left) == 1 && isRED(knot1->left->left) == 1) {
+		knot1 = rotateRight(knot1);
+	}
+	if (isRED(knot1->right) == 1 && isRED(knot1->left) == 1) {
+		flipColors(knot1);
+	}
+	return knot1;
+}
