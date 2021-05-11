@@ -108,6 +108,8 @@ Knot* insert(Knot* knot1, char* key, char* inf1, char* inf2) {
 	if (cmp == 0) {
 		free((knot1)->info->inf1);
 		free((knot1)->info->inf2);
+		free((knot1)->key);
+		knot1->key = key;
 		(knot1)->info->inf1 = inf1;
 		(knot1)->info->inf2 = inf2;
 	}
@@ -274,35 +276,43 @@ int load(Knot** knot1, char* name) {
 	char* help;
 	char* prov;
 	int flag;
+	f = fopen(name, "r+b");
+	if (f == NULL) {
+		return 1;
+	}
 	inf = (char**)calloc(3, sizeof(char*));
 	for (int i = 0; i < 3; i++) {
 		inf[i] = (char*)calloc(255, sizeof(char));
 	}
 
-	f = fopen(name, "r+b");
-	if (f == NULL) {
-		return 1;
-	}
+	
 	flag = 1;
 	while (flag == 1) {
 		inf_help = (char**)calloc(3, sizeof(char*));
+		/*
 		for (int i = 0; i < 3; i++) {
 			inf_help[i] = (char*)calloc(255, sizeof(char));
-		}
+		}*/
 		for (int i = 0; i < 3; i++) {
 			prov = fgets(inf[i], 255, f);
 			if (prov == NULL) {
 				flag = 0;
 				break;
 			}
+			inf_help[i] = (char*)calloc(strlen(inf[i])+1, sizeof(char));
 			strncpy(inf_help[i], inf[i], strlen(inf[i]) - 2);
 		}
 
-		if (flag == 0) { continue; }
+		if (flag == 0) { free(inf_help); continue; }
 		//from_str_to_fl(inf_help[1], &inf2);
 		add_el(knot1, inf_help[0], inf_help[1], inf_help[2]);
+		free(inf_help);
 
 	}
+	for (int i = 0; i < 3; i++) {
+		free(inf[i]);
+	}
+	free(inf);
 	return 0;
 }
 
