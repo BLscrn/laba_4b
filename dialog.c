@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "tree.h"
+#include "time.h"
 
 char* enter_str() {
 	int q = 0, size = 0;;
@@ -39,9 +40,9 @@ int getInt(int* a) {
 int dialog(char** key, char** inf1, char** inf2, int* what, char** key2) {
 	int flag, ch;
 	char* chouse[] = { "1. Enter new element", "2. delete element"
-		,"3. find element","4. show tree","5. Obhod in deep","6. show tree like graf","7. Exite" };
+		,"3. find element","4. show tree","5. a bit more key","6. show tree like graf","7. Exite","8. Timing" };
 	printf("Choose one of this variants:\n");
-	for (int i = 0; i < 7; i++) {
+	for (int i = 0; i < 8; i++) {
 		printf("%s\n", chouse[i]);
 	}
 	flag = 0;
@@ -52,7 +53,7 @@ int dialog(char** key, char** inf1, char** inf2, int* what, char** key2) {
 		getInt(&ch);
 		while (getchar() != '\n');
 		flag = 1;
-	} while (ch <= 0 || ch >= 8);
+	} while (ch <= 0 || ch >= 9);
 	if (ch == 1) {
 		printf("Enter key:");
 		*key = enter_str();
@@ -91,6 +92,8 @@ int dialog(char** key, char** inf1, char** inf2, int* what, char** key2) {
 	}
 	if (ch == 7) {
 		return 7;
+	}if (ch == 8) {
+		return 8;
 	}
 }
 
@@ -109,6 +112,12 @@ void check_ans(int res, Knot* help) {
 	if (res == 2 || res == 301) {
 		printf("<show element>\n ");
 		printf("\n\n%s\n%s\n%s\n", help->key, help->info->inf1, help->info->inf2);
+	}
+	if (res == 3) {
+		printf("<show element>\n ");
+		printf("\n\n%s\n%s\n%s\n", help->key, help->info->inf1, help->info->inf2);
+		FREE_knot(help);
+		help = NULL;
 	}
 	if (res == 404) {
 		printf("There are no such element in the tree\n");
@@ -148,4 +157,52 @@ void obhod_deep(Knot* knot1) {
 void show_tree(Knot* knot1) {
 	printf("<--show  tree-->\n ");
 	obhod_deep(knot1);
+}
+
+
+
+int D_Timing() {
+	Knot* knot1 = NULL;
+	//Node *root = &EList;
+	int n = 10, key[10000], k, cnt = 10000, i, m;
+	Knot* help_1;
+	clock_t first, last;
+	srand(time(NULL));
+	char* key_node = (char*)calloc(255, sizeof(char));
+	while (n-- > 0) {
+		for (i = 0; i < 10000; ++i)
+			key[i] = rand() * rand();
+		for (i = 0; i < cnt; ) {
+			k = rand() * rand();
+			itoa(k, key_node, 9);
+			//new_node = createNode(key_node, NULL, 0, 0, key_node);
+			/*if (!insert(&knot1))*/
+			char* key_node_h = (char*)calloc(strlen(key_node) + 1, sizeof(char));
+			strcpy(key_node_h, key_node);
+			help_1 = add_el(&knot1, key_node_h, NULL, NULL);
+			if (help_1 != NULL) {
+				FREE_knot(help_1);
+				help_1 = NULL;
+			}
+			++i;
+			//free(new_node);
+			//new_node = NULL;
+		}
+		m = 0;
+		first = clock();
+		Knot* help;
+		for (i = 0; i < 10000; ++i) {
+			help = NULL;
+			itoa(key[i], key_node, 10);
+			help = seach(knot1, key_node);
+			if (help != NULL) {
+				++m;
+			}
+		}
+		last = clock();
+		printf("%d items was found\n", m);
+		printf("test #%d, number of nodes = %d, time = %d\n", 10 - n, (10 - n) * cnt, last - first);
+	}
+	free_tree(knot1);
+	return 1;
 }

@@ -12,7 +12,7 @@
 #define new DEBUG_NEW
 
 int main() {
-	//_crtBreakAlloc = 134;
+	//_crtBreakAlloc = 138;
 	ret = 0;
 	knot1 = NULL;
 	entee_file(&knot1);

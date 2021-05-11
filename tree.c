@@ -10,7 +10,10 @@
 
 int rasp(int ch, char* key, char* inf1, char* inf2, int what, Knot** help, Knot** knot1, char* key2) {
 	if (ch == 1) {
-		add_el(knot1, key, inf1, inf2);
+		*help = add_el(knot1, key, inf1, inf2);
+		if (*help != NULL) {
+			return 3;
+		}
 		return 0;
 	}
 	if (ch == 2) {
@@ -40,6 +43,9 @@ int rasp(int ch, char* key, char* inf1, char* inf2, int what, Knot** help, Knot*
 	}
 	if (ch == 7) {
 		return 7;
+	}
+	if (ch == 8) {
+		D_Timing();
 	}
 }
 
@@ -80,9 +86,11 @@ Knot* new_knot(char* key, char* inf1, char* inf2) {
 	return re;
 }
 
-void add_el(Knot** knot1, char* key, char* inf1, char* inf2) {
-	*knot1 = insert(*knot1,key,inf1,inf2);
+Knot* add_el(Knot** knot1, char* key, char* inf1, char* inf2) {
+	Knot* help;
+	*knot1 = insert(*knot1,key,inf1,inf2,&help);
 	(*knot1)->color = 0;
+	return help;
 }
 int isRED(Knot* knot1) {
 	if (knot1 == NULL) {
@@ -99,25 +107,33 @@ int isRED(Knot* knot1) {
 	}
 }
 
-Knot* insert(Knot* knot1, char* key, char* inf1, char* inf2) {
+Knot* insert(Knot* knot1, char* key, char* inf1, char* inf2,Knot** help) {
 	if (knot1 == NULL) {
+		*help = NULL;
 		return new_knot(key, inf1, inf2);
 	}
 	int cmp;
 	cmp = strcmp(key, (knot1)->key);
 	if (cmp == 0) {
+		*help = (Knot*)calloc(1, sizeof(Knot));
+		(*help)->info = (Info*)calloc(1, sizeof(Info));
+		(*help)->key = knot1->key;
+		(*help)->info->inf1 = (knot1)->info->inf1;
+		(*help)->info->inf2 = (knot1)->info->inf2;
+		/*
 		free((knot1)->info->inf1);
 		free((knot1)->info->inf2);
 		free((knot1)->key);
+		*/
 		knot1->key = key;
 		(knot1)->info->inf1 = inf1;
 		(knot1)->info->inf2 = inf2;
 	}
 	else if (cmp < 0) {
-		knot1->left = insert((knot1)->left, key, inf1, inf2);
+		knot1->left = insert((knot1)->left, key, inf1, inf2,help);
 	}
 	else if (cmp > 0) {
-		knot1->right = insert((knot1)->right, key, inf1, inf2);
+		knot1->right = insert((knot1)->right, key, inf1, inf2,help);
 	}
 	if (isRED((knot1)->right) == 1 && isRED((knot1)->left) == 0) {
 		knot1 = rotateLeft(knot1);
@@ -245,11 +261,21 @@ Knot* cp_el(Knot* knot1,Knot* help) {
 	(knot1)->key = (char*)calloc(strlen(help->key) + 1, sizeof(char));
 	strcpy(knot1->key, help->key);
 	free(knot1->info->inf1);
-	(knot1)->info->inf1 = (char*)calloc(strlen(help->info->inf1) + 1, sizeof(char));
-	strcpy(knot1->info->inf1, help->info->inf1);
+	if (help->info->inf1 != NULL) {
+		(knot1)->info->inf1 = (char*)calloc(strlen(help->info->inf1) + 1, sizeof(char));
+		strcpy(knot1->info->inf1, help->info->inf1);
+	}
+	else {
+		(knot1)->info->inf1 = NULL;
+	}
 	free(knot1->info->inf2);
-	(knot1)->info->inf2 = (char*)calloc(strlen(help->info->inf2) + 1, sizeof(char));
-	strcpy(knot1->info->inf2, help->info->inf2);
+	if (help->info->inf2 != NULL) {
+		(knot1)->info->inf2 = (char*)calloc(strlen(help->info->inf2) + 1, sizeof(char));
+		strcpy(knot1->info->inf2, help->info->inf2);
+	}
+	else {
+		(knot1)->info->inf2 = NULL;
+	}
 	return knot1;
 }
 
@@ -276,6 +302,8 @@ int load(Knot** knot1, char* name) {
 	char* help;
 	char* prov;
 	int flag;
+	Knot* help_1;
+	
 	f = fopen(name, "r+b");
 	if (f == NULL) {
 		return 1;
@@ -305,7 +333,11 @@ int load(Knot** knot1, char* name) {
 
 		if (flag == 0) { free(inf_help); continue; }
 		//from_str_to_fl(inf_help[1], &inf2);
-		add_el(knot1, inf_help[0], inf_help[1], inf_help[2]);
+		help_1 = add_el(knot1, inf_help[0], inf_help[1], inf_help[2]);
+		if (help_1 != NULL) {
+			FREE_knot(help_1);
+			help_1 = NULL;
+		}
 		free(inf_help);
 
 	}
