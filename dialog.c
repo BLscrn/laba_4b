@@ -5,18 +5,17 @@
 #include "time.h"
 
 char* enter_str() {
-	int q = 0, size = 0;;
+	int q = 1, size = 10;;
 	char vsp_str[11];
 	int n = 1;
 	char* osn_str;
-	osn_str = (char*)malloc(1 * sizeof(char));
+	osn_str = (char*)calloc(1, sizeof(char));
 	while (1) {
 
 		n = scanf("%10[^\n]s", &vsp_str);
 		if (n == 0) { return osn_str; }
-		size += 10;
-		osn_str = (char*)realloc(osn_str, size * sizeof(char));
-		strcpy((osn_str)+q, vsp_str);
+		osn_str = (char*)realloc(osn_str, (size + q) * sizeof(char));
+		strcpy((osn_str)+(q - 1), vsp_str);
 
 		q += 10;
 
