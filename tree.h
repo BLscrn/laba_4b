@@ -47,4 +47,8 @@ Knot* seach(Knot* knot1, char* key);
 int load(Knot** knot1, char* name);
 void a_bit_more(Knot* knot1, char* key, Knot** help);
 void free_tree(Knot* knot1);
+void dop1_f(Knot* knot1);
+void dop1_write(Knot* knot1, FILE* f);
+void dop2();
+int int_len(int a);
 #endif

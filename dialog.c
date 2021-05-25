@@ -39,9 +39,9 @@ int getInt(int* a) {
 int dialog(char** key, char** inf1, char** inf2, int* what, char** key2) {
 	int flag, ch;
 	char* chouse[] = { "1. Enter new element", "2. delete element"
-		,"3. find element","4. show tree","5. a bit more key","6. show tree like graf","7. Exite","8. Timing" };
+		,"3. find element","4. show tree","5. a bit more key","6. show tree like graf","7. Exite","8. Timing","9. save tree","10. dop2"};
 	printf("Choose one of this variants:\n");
-	for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < 10; i++) {
 		printf("%s\n", chouse[i]);
 	}
 	flag = 0;
@@ -52,7 +52,7 @@ int dialog(char** key, char** inf1, char** inf2, int* what, char** key2) {
 		getInt(&ch);
 		while (getchar() != '\n');
 		flag = 1;
-	} while (ch <= 0 || ch >= 9);
+	} while (ch <= 0 || ch >= 11);
 	if (ch == 1) {
 		printf("Enter key:");
 		*key = enter_str();
@@ -94,6 +94,12 @@ int dialog(char** key, char** inf1, char** inf2, int* what, char** key2) {
 	}if (ch == 8) {
 		return 8;
 	}
+	if (ch == 9) {
+		return 9;
+	}
+	if (ch == 10) {
+		return 10;
+	}
 }
 
 
@@ -105,6 +111,16 @@ void print_tree(Knot* knot1, int i) {
 	}
 	printf("%s  %d\n", knot1->key,knot1->color);
 	print_tree(knot1->left, i + 1);
+}
+
+void print_tree_mod(Knot* knot1, int i) {
+	if (knot1 == NULL) { return; }
+	print_tree_mod(knot1->right, i + 1);
+	for (int j = 0; j < i; j++) {
+		printf("\t");
+	}
+	printf("%s(%s)(%s)  %d \n", knot1->key,knot1->info->inf1,knot1->info->inf2, knot1->color);
+	print_tree_mod(knot1->left, i + 1);
 }
 
 void check_ans(int res, Knot* help) {

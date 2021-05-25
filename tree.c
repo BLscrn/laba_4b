@@ -46,6 +46,15 @@ int rasp(int ch, char* key, char* inf1, char* inf2, int what, Knot** help, Knot*
 	}
 	if (ch == 8) {
 		D_Timing();
+		return 0;
+	}
+	if (ch == 9) {
+		dop1_f(*knot1);
+		return 0;
+	}
+	if (ch == 10) {
+		dop2();
+		return 0;
 	}
 }
 
@@ -367,4 +376,132 @@ void free_tree(Knot* knot1) {
 	while (knot1 != NULL) {
 		del_el(&knot1, knot1->key);
 	}
+}
+
+
+void dop1_f(Knot* knot1) {
+	FILE* f;
+	f = fopen("tree.txt", "w+b");
+	fprintf(f, "digraph G{ \n");
+	dop1_write(knot1, f);
+	fprintf(f, "\n}\n");
+	fclose(f);
+}
+
+
+void dop1_write(Knot* knot1, FILE* f) {
+	if (knot1 == NULL) {
+		return;
+	}
+	else {
+		if (knot1->left != NULL && knot1->right != NULL) {
+			fprintf(f, "%s->%s,%s\n", knot1->key, knot1->left->key, knot1->right->key);
+		}
+		else {
+			if (knot1->left != NULL && knot1->right == NULL) {
+				fprintf(f, "%s->%s\n", knot1->key, knot1->left->key);
+			}
+			else if (knot1->left != NULL && knot1->right != NULL) {
+				fprintf(f, "%s->%s\n", knot1->key, knot1->right->key);
+			}
+		}
+
+	}
+	dop1_write(knot1->right, f);
+	dop1_write(knot1->left, f);
+}
+
+
+char* find_word(char** str) {
+	char* return_str = NULL;
+	char* begin;
+	begin = *str;
+	int i = 0;
+	while (**str != '\n' && **str != ' ' && **str != '\r') {
+		i++;
+		(*str)++;
+	}
+	if (**str == ' ') {
+		(*str)++;
+	}
+	if (i > 0) {
+		return_str = (char*)calloc(i + 1, sizeof(char));
+		strncpy(return_str, begin, i);
+	}
+	return return_str;
+}
+
+void dop2() {
+	Knot* knot1;
+	knot1 = NULL;
+	FILE* f;
+	
+	char* sl;
+	int ch;
+	char* str_h = NULL;
+	int sm, st,flag;
+	char* help = NULL;
+	while (1) {
+		printf("1. new word\n2. end\n");
+		getInt(&ch);
+		while (getchar() != '\n');
+		if (ch == 1) {
+			printf("Enter string:");
+			f = fopen("tekst.txt", "r+b");
+			sl = enter_str();
+			while (getchar() != '\n');
+			sm = 0;
+			st = 1;
+			char c = '0';
+			str_h = (char*)calloc(255, sizeof(char));
+			while (1) {
+				flag = 0;
+				while (fscanf(f,"%s", str_h) != -1) {
+					if (strcmp(sl, str_h) == 0) {
+						flag = 1;
+						break;
+					}
+					fscanf(f, "%c", &c);
+					if (c == '\r') {
+						sm = -1;
+						st += 1;
+					}
+					sm += 1;
+				}
+				if (flag == 1) {
+					char* inf1 = NULL;
+					inf1 = (char*)calloc(int_len(sm) + 1, sizeof(char));
+					char* inf2 = NULL;
+					inf2 = (char*)calloc(int_len(st) + 1, sizeof(char));
+					add_el(&knot1, sl, itoa(sm, inf1, 10), itoa(st, inf2, 10));
+					break;
+				}
+				else {
+					break;
+				}
+			}
+			free(str_h);
+			fclose(f);
+		}
+		else {
+			break;
+		}
+	}
+	
+	print_tree_mod(knot1, 0);
+	printf("%d", strlen(knot1->info->inf1));
+	free_tree(knot1);
+}
+
+int int_len(int a) {
+	int b = a;
+	int i = 0;
+	if (b == 0) {
+		return 1;
+	}
+	while (b != 0) {
+		b /= 10;
+		i++;
+	}
+	return i;
 }

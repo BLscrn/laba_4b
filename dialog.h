@@ -14,5 +14,6 @@ void entee_file(Knot** knot1);
 void obhod_deep(Knot* knot1);
 void show_tree(Knot* knot1);
 int D_Timing();
+void print_tree_mod(Knot* knot1, int i);
 
 #endif
