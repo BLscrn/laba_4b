@@ -462,7 +462,7 @@ void dop2() {
 						break;
 					}
 					fscanf(f, "%c", &c);
-					if (c == '\r') {
+					if (c == '\n') {
 						sm = -1;
 						st += 1;
 					}
@@ -489,7 +489,7 @@ void dop2() {
 	}
 	
 	print_tree_mod(knot1, 0);
-	printf("%d", strlen(knot1->info->inf1));
+	//printf("%d", strlen(knot1->info->inf1));
 	free_tree(knot1);
 }
 
